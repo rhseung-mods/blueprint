@@ -1,0 +1,16 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "blueprint:item/test_pickaxe/0",
+    "layer1": "blueprint:item/test_pickaxe/1",
+    "layer10": "blueprint:item/test_pickaxe/10",
+    "layer2": "blueprint:item/test_pickaxe/2",
+    "layer3": "blueprint:item/test_pickaxe/3",
+    "layer4": "blueprint:item/test_pickaxe/4",
+    "layer5": "blueprint:item/test_pickaxe/5",
+    "layer6": "blueprint:item/test_pickaxe/6",
+    "layer7": "blueprint:item/test_pickaxe/7",
+    "layer8": "blueprint:item/test_pickaxe/8",
+    "layer9": "blueprint:item/test_pickaxe/9"
+  }
+}

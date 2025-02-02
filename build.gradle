@@ -1,81 +1,69 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id 'fabric-loom' version '1.7-SNAPSHOT'
+	id 'fabric-loom' version '1.9-SNAPSHOT'
 	id 'maven-publish'
-  	id "org.jetbrains.kotlin.jvm" version "2.0.0"
+  	id "org.jetbrains.kotlin.jvm" version "2.1.0"
 }
 
+version = project.mod_version
+group = project.maven_group
+
 base {
-	version = project.mod_version + '-fabric-' + project.minecraft_version
-	group = project.maven_group
-	archivesName = project.mod_id
+	archivesName = project.archives_base_name
 }
 
 repositories {
-	maven { url 'https://jitpack.io' }
+	// Add repositories to retrieve artifacts from in here.
+	// You should only use this when depending on other mods because
+	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
+	// for more information about repositories.
 }
 
-sourceSets {
-	main {
-		resources { srcDirs 'src/generated/resources' }
-	}
-
-	test {
-		compileClasspath += sourceSets.main.compileClasspath
-		runtimeClasspath += sourceSets.main.runtimeClasspath
-	}
-}
-
-loom {
-	runs {
-		datagen {
-			inherit server
-			name "Data Generation"
-			vmArg "-Dfabric-api.datagen"
-			vmArg "-Dfabric-api.datagen.output-dir=${file('src/generated/resources')}"
-			vmArg "-Dfabric-api.datagen.modid=${project.mod_id}"
- 
-			runDir "build/datagen"
-		}
+fabricApi {
+	configureDataGeneration {
+		client = true
 	}
 }
 
 dependencies {
+	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	// Fabric API. This is technically optional, but you probably want it anyway.
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
-
-	include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.4.1")))
 }
 
 processResources {
 	inputs.property "version", project.version
 
-	filesMatching(["modid.mixins.json", "fabric.mod.json", "pack.mcmeta"]) {
-		Map<String, ?> properties = project.properties.clone() as Map<String, ?>
-		expand properties
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
 	}
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = project.java_target as int
+	it.options.release = 21
 }
 
-tasks.withType(KotlinCompile).all {
+tasks.withType(KotlinCompile).configureEach {
 	kotlinOptions {
-		jvmTarget = project.java_target
+		jvmTarget = 21
 	}
 }
 
 java {
+	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+	// if it is present.
+	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaLanguageVersion.of(project.java_target)
-	targetCompatibility = JavaLanguageVersion.of(project.java_target)
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {
@@ -87,11 +75,13 @@ jar {
 // configure the maven publication
 publishing {
 	publications {
-		mavenJava(MavenPublication) {
+		create("mavenJava", MavenPublication) {
+			artifactId = project.archives_base_name
 			from components.java
 		}
 	}
 
+	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
 	repositories {
 		// Add repositories to publish to here.
 		// Notice: This block does NOT have the same function as the block in the top level.

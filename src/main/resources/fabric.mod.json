@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "blueprint",
-	"version": "${mod_version}",
+	"version": "${version}",
 	"name": "Blueprint",
 	"description": "A library mod for Fabric, providing useful abstract classes for modders.",
 	"authors": [
@@ -21,9 +21,15 @@
 				"adapter": "kotlin"
 			}
 		],
+		"client": [
+			{
+				"value": "com.rhseung.blueprint.BlueprintClient",
+				"adapter": "kotlin"
+			}
+		],
 		"fabric-datagen": [
 			{
-				"value": "com.rhseung.blueprint.example.DataGenerator",
+				"value": "com.rhseung.blueprint.BlueprintData",
 				"adapter": "kotlin"
 			}
 		]
@@ -32,11 +38,11 @@
 		"modid.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.15.11",
-		"minecraft": "~1.21",
+		"fabricloader": ">=0.16.9",
+		"minecraft": "~1.21.3",
 		"java": ">=21",
 		"fabric-api": "*",
-		"fabric-language-kotlin": ">=2.0.0"
+		"fabric-language-kotlin": "*"
 	},
 	"suggests": {
 		"another-mod": "*"
