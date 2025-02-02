@@ -7,7 +7,6 @@ import com.rhseung.blueprint.color.Palette
 import com.rhseung.blueprint.datagen.BlueprintTextureProvider
 import com.rhseung.blueprint.render.TextureImage
 import com.rhseung.blueprint.util.CollectionUtils.toTextureMap
-import com.rhseung.blueprint.util.ReflectionUtils.getProperty
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider
 import net.minecraft.data.DataOutput
@@ -28,12 +27,12 @@ import java.util.*
  * @see generateModels for model generation [FabricModelProvider]
  * @see generateTextures for texture generation [BlueprintTextureProvider]
  */
-class PaletteTintItem(
+class DynamicTintItem(
     id: Identifier,
     val modelId: Identifier,
     itemGroup: RegistryKey<ItemGroup>?,
     settings: Settings,
-) : InitializeItem(id, itemGroup, settings.component(Blueprint.PALETTE_COMPONENT, Palette.DEFAULT)) {
+) : InitializeItem(id, itemGroup, settings.component(Blueprint.PALETTE_COMPONENT, Palette.DIAMOND)) {
 
     constructor(id: Identifier, itemGroup: RegistryKey<ItemGroup>, settings: Settings): this(id, id.withPrefixedPath("item/"), itemGroup, settings);
 
@@ -55,11 +54,9 @@ class PaletteTintItem(
         TextureKey.of("layer$it") to modelId.withSuffixedPath("/$it")
     };
 
-    fun generateModels(parent: Model, itemModel: ItemModelGenerator) {
-        val parent = parent.getProperty<Optional<Identifier>>("parent").get();
-
+    fun generateModels(parent: String, itemModel: ItemModelGenerator) {
         val model = Model(
-            Optional.of(parent.withPrefixedPath("item/")),
+            Optional.of(Identifier.ofVanilla("item/$parent")),
             Optional.empty(),
             *textureMap.keys.toTypedArray()
         );

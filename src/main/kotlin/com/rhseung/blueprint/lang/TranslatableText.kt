@@ -1,13 +1,13 @@
 package com.rhseung.blueprint.lang
 
-import com.rhseung.blueprint.Blueprint
 import com.rhseung.blueprint.color.ColorRGB
 import com.rhseung.blueprint.util.CollectionUtils.subList
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
+import net.minecraft.util.Identifier
 
-data class TranslatableText(val name: String) {
-    val key: String = Blueprint.modid("translate.$name").toTranslationKey();
+data class TranslatableText(val id: Identifier) {
+    val key: String = id.withPrefixedPath("translate").toTranslationKey();
     private val stringBuilder = StringBuilder();
 
     val value: String

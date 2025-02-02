@@ -19,12 +19,6 @@ abstract class InitializeItem(
     settings: Settings
 ) : Item(settings.registryKey(RegistryKey.of(RegistryKeys.ITEM, id))) {
 
-    constructor(name: String, settings: Settings)
-        : this(Blueprint.modid(name), null, settings);
-
-    constructor(name: String, itemGroup: RegistryKey<ItemGroup>, settings: Settings)
-        : this(Blueprint.modid(name), itemGroup, settings);
-
     constructor(id: Identifier, settings: Settings)
         : this(id, null, settings);
 

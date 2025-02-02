@@ -26,12 +26,6 @@
 				"value": "com.rhseung.blueprint.BlueprintClient",
 				"adapter": "kotlin"
 			}
-		],
-		"fabric-datagen": [
-			{
-				"value": "com.rhseung.blueprint.BlueprintData",
-				"adapter": "kotlin"
-			}
 		]
 	},
 	"mixins": [
