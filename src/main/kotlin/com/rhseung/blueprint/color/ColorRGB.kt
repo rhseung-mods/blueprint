@@ -53,12 +53,15 @@ open class ColorRGB {
         this.V = max
     }
 
+    constructor(r: Float, g: Float, b: Float): this((r * 255).roundToInt(), (g * 255).roundToInt(), (b * 255).roundToInt());
+
     constructor(H: Int, S: Float, V: Float) {
-        this.H = H.coerceIn(0, 360)
-        this.S = S.coerceIn(0.0F, 1.0F)
-        this.V = V.coerceIn(0.0F, 1.0F)
-        val max = (this.V * 255).roundToInt()
-        val min = (max * (1 - this.S)).roundToInt()
+        this.H = H.coerceIn(0, 360);
+        this.S = S.coerceIn(0.0F, 1.0F);
+        this.V = V.coerceIn(0.0F, 1.0F);
+
+        val max = (this.V * 255).roundToInt();
+        val min = (max * (1 - this.S)).roundToInt();
 
         when (this.H) {
             in 300..<360 -> {
@@ -122,7 +125,7 @@ open class ColorRGB {
     fun fullAlpha() = argb(255);
     fun withAlpha(alpha: Int) = argb(alpha);
 
-    fun toInt(alpha: Int = 255) = argb(alpha).toInt();
+    open fun toInt() = rgb();
 
     override fun toString(): String {
         return "#06X".format(rgb());

@@ -38,7 +38,7 @@ class ColorARGB : ColorRGB {
     fun a() = a;
     fun argb() = (A shl 24) or rgb();
 
-    fun toInt() = argb();
+    override fun toInt() = argb();
     fun toRGB() = ColorRGB(R, G, B);
 
     override fun toString(): String {

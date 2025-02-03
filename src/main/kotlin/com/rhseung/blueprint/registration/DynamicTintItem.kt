@@ -27,12 +27,12 @@ import java.util.*
  * @see generateModels for model generation [FabricModelProvider]
  * @see generateTextures for texture generation [BlueprintTextureProvider]
  */
-class DynamicTintItem(
+open class DynamicTintItem(
     id: Identifier,
     val modelId: Identifier,
     itemGroup: RegistryKey<ItemGroup>?,
     settings: Settings,
-) : InitializeItem(id, itemGroup, settings.component(Blueprint.PALETTE_COMPONENT, Palette.DIAMOND)) {
+) : InitializeItem(id, itemGroup, settings.component(Blueprint.PALETTE_COMPONENT, Palette.DEFAULT)) {
 
     constructor(id: Identifier, itemGroup: RegistryKey<ItemGroup>, settings: Settings): this(id, id.withPrefixedPath("item/"), itemGroup, settings);
 
@@ -42,7 +42,7 @@ class DynamicTintItem(
 
     override fun initClient() {
         ColorProviderRegistry.ITEM.register({ stack, tintIndex ->
-            getPalette(stack)[tintIndex].toInt()
+            getPalette(stack)[tintIndex].fullAlpha().toInt()
         }, this);
     }
 
