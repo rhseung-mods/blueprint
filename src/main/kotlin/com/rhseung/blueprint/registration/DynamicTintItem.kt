@@ -34,7 +34,7 @@ open class DynamicTintItem(
     settings: Settings,
 ) : InitializeItem(id, itemGroup, settings.component(Blueprint.PALETTE_COMPONENT, Palette.DEFAULT)) {
 
-    constructor(id: Identifier, itemGroup: RegistryKey<ItemGroup>, settings: Settings): this(id, id.withPrefixedPath("item/"), itemGroup, settings);
+    constructor(id: Identifier, itemGroup: RegistryKey<ItemGroup>?, settings: Settings): this(id, id.withPrefixedPath("item/"), itemGroup, settings);
 
     constructor(id: Identifier, settings: Settings): this(id, id.withPrefixedPath("item/"), null, settings);
 
