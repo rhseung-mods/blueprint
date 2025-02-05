@@ -50,7 +50,7 @@ open class DynamicTintItem(
         return stack.getOrDefault(Blueprint.PALETTE_COMPONENT, Palette.DEFAULT);
     }
 
-    protected val textureMap: Map<TextureKey, Identifier> = (0..<Palette.SIZE).associate {
+    protected open val textureMap: Map<TextureKey, Identifier> = (0..<Palette.SIZE).associate {
         TextureKey.of("layer$it") to modelId.withSuffixedPath("/$it")
     };
 
