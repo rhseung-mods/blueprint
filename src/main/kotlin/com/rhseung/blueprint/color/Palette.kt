@@ -1,8 +1,14 @@
 package com.rhseung.blueprint.color
 
 import com.mojang.serialization.Codec
+import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import com.rhseung.blueprint.Blueprint
 import io.netty.buffer.ByteBuf
+import net.minecraft.client.render.item.tint.TintSource
+import net.minecraft.client.world.ClientWorld
+import net.minecraft.entity.LivingEntity
+import net.minecraft.item.ItemStack
 import net.minecraft.network.codec.PacketCodec
 import net.minecraft.network.codec.PacketCodecs
 
@@ -42,6 +48,13 @@ data class Palette(val mainIndex: Int, val colors: List<ColorRGB>) {
         val SIZE = (0..10).count();
 
         val CODEC: Codec<Palette> = RecordCodecBuilder.create { instance ->
+            instance.group(
+                Codec.INT.fieldOf("main_index").forGetter(Palette::mainIndex),
+                Codec.list(ColorRGB.CODEC).fieldOf("colors").forGetter(Palette::colors)
+            ).apply(instance, ::Palette)
+        };
+
+        val MAP_CODEC: MapCodec<Palette> = RecordCodecBuilder.mapCodec { instance ->
             instance.group(
                 Codec.INT.fieldOf("main_index").forGetter(Palette::mainIndex),
                 Codec.list(ColorRGB.CODEC).fieldOf("colors").forGetter(Palette::colors)

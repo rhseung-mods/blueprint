@@ -1,3 +1,9 @@
+# test
+
+src/main/generated
+src/main/kotlin/com/rhseung/blueprint/test
+src/main/resources/assets/blueprint/textures
+
 # gradle
 
 .gradle/

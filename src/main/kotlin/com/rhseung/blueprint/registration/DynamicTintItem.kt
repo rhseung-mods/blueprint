@@ -4,15 +4,15 @@ import com.rhseung.blueprint.Blueprint
 import com.rhseung.blueprint.color.ColorARGB
 import com.rhseung.blueprint.color.Colors
 import com.rhseung.blueprint.color.Palette
+import com.rhseung.blueprint.color.PaletteTintSource
 import com.rhseung.blueprint.datagen.BlueprintTextureProvider
 import com.rhseung.blueprint.render.TextureImage
 import com.rhseung.blueprint.util.CollectionUtils.toTextureMap
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider
+import net.minecraft.client.data.ItemModelGenerator
+import net.minecraft.client.data.ItemModels
+import net.minecraft.client.data.Model
+import net.minecraft.client.data.TextureKey
 import net.minecraft.data.DataOutput
-import net.minecraft.data.client.ItemModelGenerator
-import net.minecraft.data.client.Model
-import net.minecraft.data.client.TextureKey
 import net.minecraft.item.ItemGroup
 import net.minecraft.item.ItemStack
 import net.minecraft.registry.RegistryKey
@@ -40,31 +40,44 @@ open class DynamicTintItem(
 
     override fun init() {}
 
-    override fun initClient() {
-        ColorProviderRegistry.ITEM.register({ stack, tintIndex ->
-            getPalette(stack)[tintIndex].fullAlpha().toInt()
-        }, this);
+    override fun initClient() {}
+
+    open fun getPalette(stack: ItemStack): Palette? {
+        return stack.get(Blueprint.PALETTE_COMPONENT);
     }
 
-    fun getPalette(stack: ItemStack): Palette {
-        return stack.getOrDefault(Blueprint.PALETTE_COMPONENT, Palette.DEFAULT);
+    open fun getPaletteOrDefault(stack: ItemStack): Palette {
+        return getPalette(stack) ?: Palette.DEFAULT;
     }
 
-    protected val textureMap: Map<TextureKey, Identifier> = (0..<Palette.SIZE).associate {
+    open fun setPalette(stack: ItemStack, palette: Palette) {
+        stack.set(Blueprint.PALETTE_COMPONENT, palette);
+    }
+
+    protected open val textureMap: Map<TextureKey, Identifier> = (0..<Palette.SIZE).associate {
         TextureKey.of("layer$it") to modelId.withSuffixedPath("/$it")
     };
 
-    fun generateModels(parent: String, itemModel: ItemModelGenerator) {
+    open fun generateModels(parent: String, itemModel: ItemModelGenerator) {
         val model = Model(
             Optional.of(Identifier.ofVanilla("item/$parent")),
             Optional.empty(),
             *textureMap.keys.toTypedArray()
         );
 
-        model.upload(modelId, textureMap.toTextureMap(), itemModel.writer);
+        val uploaded: Identifier = model.upload(
+            modelId,
+            textureMap.toTextureMap(),
+            itemModel.modelCollector
+        );
+
+        itemModel.output.accept(
+            this,
+            ItemModels.tinted(uploaded, *(0..<Palette.SIZE).map(::PaletteTintSource).toTypedArray())
+        );
     }
 
-    fun generateTextures(texturesPathResolver: DataOutput.PathResolver) {
+    open fun generateTextures(texturesPathResolver: DataOutput.PathResolver) {
         val baseImage = BlueprintTextureProvider.getImage(texturesPathResolver, modelId);
 
         require(Palette.DEFAULT.toSet().containsAll(baseImage.getColors().map(ColorARGB::toRGB))) {

@@ -11,7 +11,7 @@ import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.util.Identifier
 
-abstract class InitializeItem(
+open class InitializeItem(
     open val id: Identifier,
     val itemGroup: RegistryKey<ItemGroup>?,
     settings: Settings

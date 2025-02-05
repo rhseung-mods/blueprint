@@ -1,6 +1,7 @@
 package com.rhseung.blueprint
 
 import com.rhseung.blueprint.color.Palette
+import com.rhseung.blueprint.test.TestItems
 import net.fabricmc.api.ModInitializer
 import net.minecraft.component.ComponentType
 import net.minecraft.registry.Registries
@@ -9,7 +10,7 @@ import net.minecraft.util.Identifier
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-object Blueprint : ModInitializer {
+object Blueprint {
     const val MOD_ID = "blueprint";
     val LOGGER: Logger = LoggerFactory.getLogger(MOD_ID);
 
@@ -23,6 +24,4 @@ object Blueprint : ModInitializer {
             .packetCodec(Palette.PACKET_CODEC)
             .build()
     );
-
-    override fun onInitialize() {}
 }
