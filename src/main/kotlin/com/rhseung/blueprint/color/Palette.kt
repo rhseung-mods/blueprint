@@ -3,12 +3,7 @@ package com.rhseung.blueprint.color
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import com.rhseung.blueprint.Blueprint
 import io.netty.buffer.ByteBuf
-import net.minecraft.client.render.item.tint.TintSource
-import net.minecraft.client.world.ClientWorld
-import net.minecraft.entity.LivingEntity
-import net.minecraft.item.ItemStack
 import net.minecraft.network.codec.PacketCodec
 import net.minecraft.network.codec.PacketCodecs
 
@@ -41,18 +36,7 @@ data class Palette(val mainIndex: Int, val colors: List<ColorRGB>) {
     }
 
     companion object {
-        fun fromColor(color: ColorRGB): Palette {
-            return Palette(DEFAULT.indexOf(color), DEFAULT.colors);
-        }
-
         val SIZE = (0..10).count();
-
-        val CODEC: Codec<Palette> = RecordCodecBuilder.create { instance ->
-            instance.group(
-                Codec.INT.fieldOf("main_index").forGetter(Palette::mainIndex),
-                Codec.list(ColorRGB.CODEC).fieldOf("colors").forGetter(Palette::colors)
-            ).apply(instance, ::Palette)
-        };
 
         val MAP_CODEC: MapCodec<Palette> = RecordCodecBuilder.mapCodec { instance ->
             instance.group(
@@ -61,6 +45,9 @@ data class Palette(val mainIndex: Int, val colors: List<ColorRGB>) {
             ).apply(instance, ::Palette)
         };
 
+        val CODEC: Codec<Palette>
+            get() = MAP_CODEC.codec();
+
         val PACKET_CODEC: PacketCodec<ByteBuf, Palette> = PacketCodec.tuple(
             PacketCodecs.INTEGER, Palette::mainIndex,
             ColorRGB.PACKET_CODEC.collect(PacketCodecs.toList()), Palette::colors,
@@ -68,7 +55,8 @@ data class Palette(val mainIndex: Int, val colors: List<ColorRGB>) {
         );
 
         val DEFAULT = Palette(
-            3, listOf(
+            3,
+            listOf(
                 ColorRGB(255, 255, 255),
                 ColorRGB(229, 229, 229),
                 ColorRGB(204, 204, 204),
@@ -79,22 +67,6 @@ data class Palette(val mainIndex: Int, val colors: List<ColorRGB>) {
                 ColorRGB(76, 76, 76),
                 ColorRGB(51, 51, 51),
                 ColorRGB(25, 25, 25),
-                ColorRGB(0, 0, 0)
-            )
-        );
-
-        val DIAMOND = Palette(
-            3, listOf(
-                ColorRGB(255, 255, 255),
-                ColorRGB(215, 249, 245),
-                ColorRGB(164, 253, 240),
-                ColorRGB(51, 235, 216),
-                ColorRGB(43, 199, 181),
-                ColorRGB(38, 160, 150),
-                ColorRGB(30, 138, 130),
-                ColorRGB(21, 99, 98),
-                ColorRGB(14, 63, 63),
-                ColorRGB(8, 37, 35),
                 ColorRGB(0, 0, 0)
             )
         );

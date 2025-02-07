@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import com.rhseung.blueprint.Blueprint
+import com.rhseung.blueprint.registration.DynamicTintItem
 import net.minecraft.client.render.item.tint.TintSource
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.LivingEntity
@@ -27,8 +28,14 @@ class PaletteTintSource(val index: Int) : TintSource {
         world: ClientWorld?,
         user: LivingEntity?
     ): Int {
-        val palette = stack.getOrDefault(Blueprint.PALETTE_COMPONENT, Palette.DEFAULT);
-        return palette[index].fullAlpha().toInt();
+        val fallback: Palette? = (stack.item as? DynamicTintItem)?.defaultPalette;
+        val palette: Palette? = stack.get(Blueprint.PALETTE_COMPONENT) ?: fallback;
+
+        // todo: 텍스쳐가 alpha 값이 있어도 불투명하게 표시되는 문제
+        return if (palette != null)
+            palette[index].fullAlpha().toInt();
+        else
+            -1;
     }
 
     override fun getCodec(): MapCodec<out TintSource> {

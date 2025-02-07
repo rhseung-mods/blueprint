@@ -1,8 +1,6 @@
 package com.rhseung.blueprint
 
 import com.rhseung.blueprint.color.Palette
-import com.rhseung.blueprint.test.TestItems
-import net.fabricmc.api.ModInitializer
 import net.minecraft.component.ComponentType
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry

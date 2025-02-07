@@ -3,6 +3,7 @@
 src/main/generated
 src/main/kotlin/com/rhseung/blueprint/test
 src/main/resources/assets/blueprint/textures
+src/main/java/com/rhseung/blueprint/mixin/tooltip/ItemModelTypesMixin.java
 
 # gradle
 

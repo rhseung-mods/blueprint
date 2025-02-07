@@ -1,6 +1,6 @@
 package com.rhseung.blueprint.util
 
-import com.rhseung.blueprint.util.ReflectionUtils.get
+import com.rhseung.blueprint.mixin.accessor.DrawContextAccessor
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexConsumer
@@ -16,12 +16,12 @@ import kotlin.math.min
 
 object DrawUtils {
     fun getSprite(context: DrawContext, id: Identifier): Sprite {
-        val guiAtlasManager: GuiAtlasManager = context["guiAtlasManager"];
+        val guiAtlasManager: GuiAtlasManager = (context as DrawContextAccessor).guiAtlasManager;
         return guiAtlasManager.getSprite(id);
     }
 
     fun getScaling(context: DrawContext, id: Identifier): Scaling {
-        val guiAtlasManager: GuiAtlasManager = context["guiAtlasManager"];
+        val guiAtlasManager: GuiAtlasManager = (context as DrawContextAccessor).guiAtlasManager;
         val sprite = guiAtlasManager.getSprite(id);
         return guiAtlasManager.getScaling(sprite);
     }
@@ -127,7 +127,7 @@ object DrawUtils {
     fun drawTexturedQuad(context: DrawContext, renderLayers: Function<Identifier, RenderLayer>, texture: Identifier, x1: Float, x2: Float, y1: Float, y2: Float, u1: Float, u2: Float, v1: Float, v2: Float, color: Int) {
         val renderLayer: RenderLayer = renderLayers.apply(texture);
         val matrix: Matrix4f = context.matrices.peek().positionMatrix;
-        val vertexConsumerProvider: VertexConsumerProvider.Immediate = context["vertexConsumers"];
+        val vertexConsumerProvider: VertexConsumerProvider.Immediate = (context as DrawContextAccessor).vertexConsumers;
         val vertexConsumer: VertexConsumer = vertexConsumerProvider.getBuffer(renderLayer);
 
         val d: Float = 0b1 / 32768f;

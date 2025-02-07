@@ -12,6 +12,8 @@ import net.minecraft.client.data.ItemModelGenerator
 import net.minecraft.client.data.ItemModels
 import net.minecraft.client.data.Model
 import net.minecraft.client.data.TextureKey
+import net.minecraft.client.render.item.model.BasicItemModel
+import net.minecraft.client.render.item.model.ItemModel
 import net.minecraft.data.DataOutput
 import net.minecraft.item.ItemGroup
 import net.minecraft.item.ItemStack
@@ -29,14 +31,15 @@ import java.util.*
  */
 open class DynamicTintItem(
     id: Identifier,
-    val modelId: Identifier,
+    open val modelId: Identifier,
     itemGroup: RegistryKey<ItemGroup>?,
     settings: Settings,
-) : InitializeItem(id, itemGroup, settings.component(Blueprint.PALETTE_COMPONENT, Palette.DEFAULT)) {
+    open val defaultPalette: Palette = Palette.DEFAULT
+) : InitializeItem(id, itemGroup, settings.component(Blueprint.PALETTE_COMPONENT, defaultPalette)) {
 
-    constructor(id: Identifier, itemGroup: RegistryKey<ItemGroup>?, settings: Settings): this(id, id.withPrefixedPath("item/"), itemGroup, settings);
+    constructor(id: Identifier, itemGroup: RegistryKey<ItemGroup>?, settings: Settings, defaultPalette: Palette = Palette.DEFAULT): this(id, id.withPrefixedPath("item/"), itemGroup, settings, defaultPalette);
 
-    constructor(id: Identifier, settings: Settings): this(id, id.withPrefixedPath("item/"), null, settings);
+    constructor(id: Identifier, settings: Settings, defaultPalette: Palette = Palette.DEFAULT): this(id, id.withPrefixedPath("item/"), null, settings, defaultPalette);
 
     override fun init() {}
 
@@ -47,7 +50,7 @@ open class DynamicTintItem(
     }
 
     open fun getPaletteOrDefault(stack: ItemStack): Palette {
-        return getPalette(stack) ?: Palette.DEFAULT;
+        return getPalette(stack) ?: defaultPalette;
     }
 
     open fun setPalette(stack: ItemStack, palette: Palette) {
@@ -58,23 +61,25 @@ open class DynamicTintItem(
         TextureKey.of("layer$it") to modelId.withSuffixedPath("/$it")
     };
 
-    open fun generateModels(parent: String, itemModel: ItemModelGenerator) {
-        val model = Model(
+    open fun generateModels(parent: String, itemModel: ItemModelGenerator): BasicItemModel.Unbaked {
+        val parent = Model(
             Optional.of(Identifier.ofVanilla("item/$parent")),
             Optional.empty(),
             *textureMap.keys.toTypedArray()
         );
 
-        val uploaded: Identifier = model.upload(
-            modelId,
-            textureMap.toTextureMap(),
-            itemModel.modelCollector
-        );
+        val unbaked: BasicItemModel.Unbaked = ItemModels.tinted(
+            parent.upload(
+                modelId,
+                textureMap.toTextureMap(),
+                itemModel.modelCollector
+            ),
+            *(0..<Palette.SIZE).map(::PaletteTintSource).toTypedArray()
+        ) as BasicItemModel.Unbaked;
 
-        itemModel.output.accept(
-            this,
-            ItemModels.tinted(uploaded, *(0..<Palette.SIZE).map(::PaletteTintSource).toTypedArray())
-        );
+        itemModel.output.accept(this, unbaked);
+
+        return unbaked;
     }
 
     open fun generateTextures(texturesPathResolver: DataOutput.PathResolver) {
