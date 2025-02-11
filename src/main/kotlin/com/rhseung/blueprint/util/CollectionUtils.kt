@@ -12,4 +12,12 @@ object CollectionUtils {
         this.forEach(ret::put);
         return ret;
     }
+
+    fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
+        var sum = 0.0f;
+        for (element in this) {
+            sum += selector(element);
+        }
+        return sum;
+    }
 }
