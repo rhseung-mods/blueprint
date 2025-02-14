@@ -17,19 +17,13 @@
 	"entrypoints": {
 		"main": [
 			{
-				"value": "com.rhseung.blueprint.test.entrypoint.TestMainEntrypoint",
+				"value": "com.rhseung.blueprint.Blueprint",
 				"adapter": "kotlin"
 			}
 		],
 		"client": [
 			{
-				"value": "com.rhseung.blueprint.test.entrypoint.TestClientEntrypoint",
-				"adapter": "kotlin"
-			}
-		],
-		"fabric-datagen": [
-			{
-				"value": "com.rhseung.blueprint.test.entrypoint.TestDataGenEntrypoint",
+				"value": "com.rhseung.blueprint.BlueprintClient",
 				"adapter": "kotlin"
 			}
 		]
